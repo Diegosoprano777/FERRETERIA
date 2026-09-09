@@ -1,13 +1,24 @@
-# Ferretería El Martillo - API Backend & Automation Testing
+# Supermercado API Backend & Automation Testing - Diego Alejandro Sanchez Lopez
 
-Proyecto backend desarrollado con Django REST Framework para la gestión de productos e inventario de Ferretería El Martillo, incluyendo suite de pruebas unitarias, colección de Postman/Newman y pruebas E2E con Cypress.
+Proyecto backend desarrollado con Django REST Framework para la gestión de productos perecederos (`ProductoPerecedero`) en el rubro de Supermercado. Incluye suite de pruebas unitarias, colección de Postman/Newman con validación de JSON Schema y pruebas E2E en modo headless con Cypress.
+
+## 📋 Información del Proyecto
+- **Estudiante:** Diego Alejandro Sanchez Lopez
+- **Dominio / Rubro:** Supermercado
+- **Entidad Principal:** `ProductoPerecedero`
+- **Atributos:** `id`, `nombre`, `sku`, `precio_regular`, `dias_vencimiento`, `precio_oferta`
+- **Reglas de Negocio:**
+  - Validar que `dias_vencimiento` no sea negativo (`< 0`).
+  - Calcular automáticamente un **20% de descuento** sobre `precio_regular` si `dias_vencimiento < 5` para determinar `precio_oferta`.
+
+---
 
 ## 🚀 Tecnologías Utilizadas
 
-- **Backend:** Python 3.13 / Django 6.1 / Django REST Framework (DRF)
+- **Backend:** Python / Django / Django REST Framework (DRF)
 - **Base de Datos:** SQLite / PostgreSQL
-- **Autenticación:** Django REST Framework Token Authentication
-- **Testing Unitario:** Django TestCase
+- **Autenticación:** DRF Token Authentication (`CustomObtainAuthToken`)
+- **Testing Unitario:** Django TestCase / APITestCase
 - **Pruebas de API (CLI):** Postman / Newman CLI
 - **Pruebas E2E:** Cypress 16
 
@@ -44,7 +55,7 @@ Proyecto backend desarrollado con Django REST Framework para la gestión de prod
 
 ## 🧪 Pruebas Unitarias (Django TestCase)
 
-Para ejecutar la suite de pruebas unitarias de Django:
+Ejecutar la suite de pruebas unitarias de Django (modelos y endpoints):
 
 ```bash
 python manage.py test modulo_inventario
@@ -54,18 +65,18 @@ python manage.py test modulo_inventario
 
 ## 📮 Pruebas de API con Newman CLI
 
-Ejecución de la colección de Postman con entorno local:
+Ejecución de la colección de Postman con entorno local y validaciones (Status code, tiempo de respuesta < 2000 ms y JSON Schema):
 
 ```bash
-newman run Ferreteria_API_Testing.postman_collection.json -e Entorno_local.postman_environment.json
+npx newman run Supermercado_API_Testing.postman_collection.json -e Entorno_local.postman_environment.json
 ```
 
 ---
 
 ## 🌲 Pruebas de Integración E2E con Cypress
 
-Ejecución headless de la suite E2E de Cypress:
+Ejecución headless de la suite E2E de Cypress (POST -> GET -> DELETE):
 
 ```bash
-npx cypress run --spec "cypress/e2e/ferreteria_api_spec.cy.js"
+npx cypress run --spec "cypress/e2e/supermercado_api_spec.cy.js"
 ```

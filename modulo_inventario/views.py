@@ -3,12 +3,12 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from .models import Producto
-from .serializers import ProductoSerializer
+from .models import ProductoPerecedero
+from .serializers import ProductoPerecederoSerializer
 
-class ProductoViewSet(viewsets.ModelViewSet):
-    queryset = Producto.objects.all().order_by('id')
-    serializer_class = ProductoSerializer
+class ProductoPerecederoViewSet(viewsets.ModelViewSet):
+    queryset = ProductoPerecedero.objects.all().order_by('id')
+    serializer_class = ProductoPerecederoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -19,4 +19,5 @@ class CustomObtainAuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key, 'user_id': user.pk, 'email': user.email}, status=status.HTTP_200_OK)
+
     

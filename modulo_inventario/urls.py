@@ -1,9 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProductoViewSet, CustomObtainAuthToken
+from .views import ProductoPerecederoViewSet, CustomObtainAuthToken
 
 router = DefaultRouter()
-router.register(r'productos', ProductoViewSet, basename='producto')
+router.register(r'productos', ProductoPerecederoViewSet, basename='producto')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),

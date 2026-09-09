@@ -1,0 +1,262 @@
+{
+	"info": {
+		"_postman_id": "c1f2e3d4-5678-4901-abcd-ef1234567890",
+		"name": "Supermercado_API_Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST Autenticacion Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Validar JSON Schema de Token Auth\", function () {",
+							"    var schema = {",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"token\"],",
+							"        \"properties\": {",
+							"            \"token\": { \"type\": \"string\" }",
+							"        }",
+							"    };",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.token) {",
+							"    pm.environment.set(\"user_token\", jsonData.token);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"Diego\",\n  \"password\": \"Diego12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_base}}/api/v1/auth/",
+					"host": [
+						"{{url_base}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Crear Producto Perecedero",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Validar JSON Schema de ProductoPerecedero Creado\", function () {",
+							"    var schema = {",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"nombre\", \"sku\", \"precio_regular\", \"dias_vencimiento\", \"precio_oferta\"],",
+							"        \"properties\": {",
+							"            \"id\": { \"type\": \"number\" },",
+							"            \"nombre\": { \"type\": \"string\" },",
+							"            \"sku\": { \"type\": \"string\" },",
+							"            \"precio_regular\": { \"type\": \"string\" },",
+							"            \"dias_vencimiento\": { \"type\": \"number\" },",
+							"            \"precio_oferta\": { \"type\": \"string\" }",
+							"        }",
+							"    };",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.id) {",
+							"    pm.environment.set(\"producto_id\", jsonData.id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token {{user_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Yogurt Griego 200g\",\n  \"sku\": \"YOG-GRIEGO-001\",\n  \"precio_regular\": 5000.00,\n  \"dias_vencimiento\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_base}}/api/v1/productos/",
+					"host": [
+						"{{url_base}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"productos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Consulta productos -JSON Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Validar JSON Schema de Lista de Productos\", function () {",
+							"    var itemSchema = {",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"nombre\", \"sku\", \"precio_regular\", \"dias_vencimiento\", \"precio_oferta\"],",
+							"        \"properties\": {",
+							"            \"id\": { \"type\": \"number\" },",
+							"            \"nombre\": { \"type\": \"string\" },",
+							"            \"sku\": { \"type\": \"string\" },",
+							"            \"precio_regular\": { \"type\": \"string\" },",
+							"            \"dias_vencimiento\": { \"type\": \"number\" },",
+							"            \"precio_oferta\": { \"type\": \"string\" }",
+							"        }",
+							"    };",
+							"    var schema = {",
+							"        \"type\": \"array\",",
+							"        \"items\": itemSchema",
+							"    };",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{user_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url_base}}/api/v1/productos/",
+					"host": [
+						"{{url_base}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"productos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Eliminar Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204 No Content\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{user_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url_base}}/api/v1/productos/{{producto_id}}/",
+					"host": [
+						"{{url_base}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"productos",
+						"{{producto_id}}",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

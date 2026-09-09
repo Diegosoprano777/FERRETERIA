@@ -1,23 +1,21 @@
 from rest_framework import serializers
-from .models import Producto
+from .models import ProductoPerecedero
 
 
-class ProductoSerializer(serializers.ModelSerializer):
-    precio_final = serializers.SerializerMethodField()
+class ProductoPerecederoSerializer(serializers.ModelSerializer):
+    precio_oferta = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
-        model = Producto
-        fields = ["id", "nombre", "codigo", "precio_base", "stock", "precio_final"]
+        model = ProductoPerecedero
+        fields = ["id", "nombre", "sku", "precio_regular", "dias_vencimiento", "precio_oferta"]
 
-    def get_precio_final(self, obj):
-        return obj.calcular_precio_con_iva()
-
-    def validate_precio_base(self, value):
+    def validate_dias_vencimiento(self, value):
         if value < 0:
-            raise serializers.ValidationError("El precio base no puede ser negativo")
+            raise serializers.ValidationError("Los días para vencer no pueden ser negativos")
         return value
 
-    def validate_stock(self, value):
+    def validate_precio_regular(self, value):
         if value < 0:
-            raise serializers.ValidationError("El stock no puede ser negativo")
+            raise serializers.ValidationError("El precio regular no puede ser negativo")
         return value
+

@@ -2,7 +2,7 @@
   "dependencies": {
     "newman-reporter-html": "^1.0.5"
   },
-  "name": "ferreteria_backend_testing",
+  "name": "supermercado_backend_testing",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

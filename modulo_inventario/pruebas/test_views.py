@@ -1,64 +1,58 @@
+from decimal import Decimal
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from modulo_inventario.models import Producto
+from modulo_inventario.models import ProductoPerecedero
 
-class ProductoAPITestCase(APITestCase):
+class ProductoPerecederoAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.token = Token.objects.create(user=self.user)
 
-        self.producto = Producto.objects.create(
-            nombre="Martillo",
-            codigo="M123",
-            precio_base=10000.00,
-            stock=10
+        self.producto = ProductoPerecedero.objects.create(
+            nombre="Leche Entera 1L",
+            sku="LECHE-001",
+            precio_regular=Decimal("3500.00"),
+            dias_vencimiento=3
         )
-        # Corregido: Uso de variables planas
         self.url_list = '/api/v1/productos/'
         self.url_detail = f'/api/v1/productos/{self.producto.id}/'
 
-    def test_obtener_productos_sin_autenticacion(self):
-        # Corregido: Llamada a self.url_list
+    def test_obtener_productos_retorna_200(self):
         response = self.client.get(self.url_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
     def test_crear_producto_sin_token_retorna_401(self):
         data = {
-            "nombre": "Destornillador",
-            "codigo": "D456",
-            "precio_base": 5000.00,
-            "stock": 20
+            "nombre": "Jamon de Pavo 250g",
+            "sku": "JAMON-002",
+            "precio_regular": 8500.00,
+            "dias_vencimiento": 10
         }
-        # Corregido: Llamada a self.url_list
         response = self.client.post(self.url_list, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    # Corregido: Indentación ajustada al nivel de la clase
-    def test_crear_producto_con_token_exitoso(self):
+    def test_crear_producto_con_token_retorna_201(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         data = {
-            "nombre": "Destornillador",
-            "codigo": "D456",
-            "precio_base": 5000.00,
-            "stock": 20
+            "nombre": "Jamon de Pavo 250g",
+            "sku": "JAMON-002",
+            "precio_regular": 8500.00,
+            "dias_vencimiento": 2
         }
-        # Corregido: Llamada a self.url_list
         response = self.client.post(self.url_list, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # Corregido: Producto con P mayúscula
-        self.assertEqual(Producto.objects.count(), 2)
+        self.assertEqual(ProductoPerecedero.objects.count(), 2)
+        self.assertEqual(response.data["precio_oferta"], "6800.00")
 
-    # Corregido: Indentación ajustada al nivel de la clase
     def test_crear_producto_datos_invalidos_retorna_400(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         data = {
-            "nombre": "Destornillador",
-            "codigo": "D456",
-            "precio_base": -5000.00,
-            "stock": 20
+            "nombre": "Queso Tajado 200g",
+            "sku": "QUESO-004",
+            "precio_regular": 6000.00,
+            "dias_vencimiento": -5
         }
-        # Corregido: Llamada a self.url_list
         response = self.client.post(self.url_list, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
