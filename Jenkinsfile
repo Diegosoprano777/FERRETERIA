@@ -17,14 +17,17 @@ pipeline {
         stage('2. Pruebas Automatizadas (Testing)') {
             steps {
                 echo 'Ejecutando la suite de pruebas del Backend en Django...'
-                bat 'dir'
+                sh '''
+                    echo "Validando archivos del proyecto..."
+                    ls -la
+                '''
             }
         }
 
         stage('3. Construcción de Imagen (Build Docker Image)') {
             steps {
                 echo 'Construyendo la imagen de contenedor Docker...'
-                bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% ."
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
@@ -32,9 +35,9 @@ pipeline {
             steps {
                 echo 'Subiendo la imagen a Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                    bat '''
-                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                        docker push %DOCKER_IMAGE%:%DOCKER_TAG%
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
                     '''
                 }
             }
